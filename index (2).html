@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>¿Mito o realidad? Terremotos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<canvas id="scene" aria-hidden="true"></canvas>
+<div class="app" id="app">
+  <div class="topbar" id="topbar" hidden>
+    <button class="btn ghost" id="to-menu" type="button"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.8"/></svg>Inicio</button>
+    <span class="brand">¿Mito o realidad?</span>
+    <span class="spacer"></span>
+    <button class="btn ghost" id="t-src" type="button">Fuentes</button>
+    <div class="meter"><span><b class="num" id="hits">0</b>aciertos</span><span><b class="num" id="streak">0</b>seguidos</span></div>
+    <div class="track" id="track" aria-hidden="true"></div>
+    <span class="sr" id="ptxt"></span>
+  </div>
+
+  <section class="screen" id="s-menu" aria-labelledby="m-title">
+    <div class="cover">
+      <h1 id="m-title">¿Mito<span>o realidad?</span></h1>
+      <p class="cover-sub">Quince creencias sobre los terremotos</p>
+      <button class="go" type="button" id="m-start">Empezar</button>
+    </div>
+  </section>
+
+  <section class="screen" id="s-rules" hidden aria-labelledby="r-title">
+    <div class="rules">
+      <h2 id="r-title">Antes de empezar</h2>
+      <p class="aware">Después de un terremoto circulan muchas ideas: que se puede predecir, que lo anuncia el clima, que el marco de la puerta protege. Algunas son inofensivas; otras llevan a tomar malas decisiones cuando más importa. Esta actividad busca informar sobre las creencias más comunes y contrastarlas con lo que dicen el Servicio Geológico Colombiano, el USGS y otras fuentes científicas.</p>
+      <h3 class="how">Cómo funciona</h3>
+      <ol class="steps">
+        <li><b>Lee la afirmación.</b><span>Son ideas que circulan sobre los terremotos.</span></li>
+        <li><b>Elige una respuesta.</b><span><em class="t mito">Mito</em> si es falsa, <em class="t realidad">Realidad</em> si es cierta y <em class="t medias">A medias</em> si tiene algo de cierto pero engaña.</span></li>
+        <li><b>Lee el veredicto.</b><span>Verás la explicación y su fuente. En “Quiero saber más” hay contexto de Colombia.</span></li>
+        <li><b>Mira el terreno.</b><span>Cada respuesta incorrecta sacude la tierra y la agrieta, como recordatorio de lo que está en juego cuando creemos en un mito.</span></li>
+      </ol>
+      <p class="keys">Puedes responder con el ratón o con el teclado: teclas <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> para responder y <kbd>→</kbd> para pasar a la siguiente. Con <kbd>←</kbd> o el botón “Anterior” vuelves a ver las que ya respondiste.</p>
+      <div><button class="btn primary" type="button" id="r-go">Entendido, empezar</button></div>
+    </div>
+  </section>
+
+  <section class="screen" id="s-play" hidden aria-label="Afirmaciones">
+    <div class="play">
+      <div class="stage" id="stage">
+        <div class="card" id="card">
+          <div class="face front" id="front">
+            <span class="n num" id="f-n">Afirmación 1 de 15</span>
+            <p class="claim" id="f-claim"></p>
+            <div class="backrow"><button class="btn ghost" id="prev2" type="button">← Volver a la anterior</button></div>
+          </div>
+          <div class="face back" id="back" aria-hidden="true">
+            <div class="verdict"><span class="tag" id="b-tag"></span><span class="result" id="b-res"></span></div>
+            <p class="short" id="b-short"></p>
+            <p class="src" id="b-src"></p>
+            <details class="more" id="b-more">
+              <summary>Quiero saber más</summary>
+              <p id="b-long"></p>
+              <ul id="b-links"></ul>
+            </details>
+            <div class="nextrow"><button class="btn ghost" id="prev" type="button">← Anterior</button><button class="btn" id="next" type="button">Siguiente</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="choices" role="group" aria-label="Tu respuesta" id="choices">
+        <button class="choice" type="button" data-v="mito">Mito<small>tecla 1</small></button>
+        <button class="choice" type="button" data-v="medias">A medias<small>tecla 2</small></button>
+        <button class="choice" type="button" data-v="realidad">Realidad<small>tecla 3</small></button>
+      </div>
+      <p class="ground-msg" id="ground-msg">Elige una respuesta con el ratón, con las flechas y Enter o con las teclas 1, 2 y 3.</p>
+      <p class="sr" aria-live="polite" id="live"></p>
+    </div>
+  </section>
+
+  <section class="screen" id="s-final" hidden aria-label="Resultado"></section>
+</div>
+
+<div class="panel" id="p-how" hidden role="dialog" aria-modal="true" aria-labelledby="how-t">
+  <div class="inner">
+    <div><button class="btn ghost" type="button" data-close>Volver</button></div>
+    <h2 id="how-t">Cómo funciona</h2>
+    <p>Cada tarjeta presenta una afirmación que circula sobre los terremotos. Elige una de tres respuestas:</p>
+    <p><b>Mito:</b> la evidencia científica la contradice. <b>Realidad:</b> la evidencia la respalda. <b>A medias:</b> tiene una parte cierta, pero tal como se dice es engañosa.</p>
+    <p>Después de responder verás el veredicto, una explicación corta y su fuente. “Quiero saber más” amplía el contexto, con ejemplos de Colombia cuando los hay. Al final aparece la lista completa de afirmaciones y veredictos para repasar.</p>
+    <p>Con el teclado: flechas izquierda y derecha para moverte entre respuestas, Enter para elegir y para pasar a la siguiente; también sirven las teclas 1, 2 y 3. Con el botón “Anterior”, la flecha izquierda o tocando la barra de progreso vuelves a las afirmaciones que ya viste. Esc vuelve al menú.</p>
+    <p>El fondo es una ilustración del terreno con un sismógrafo. Cuando una respuesta es incorrecta, el terreno se sacude, se agrieta y caen fragmentos de roca; cuando es correcta, se aquieta. Si tu equipo tiene activada la opción de reducir movimiento, los cambios se muestran sin animación.</p>
+  </div>
+</div>
+<div class="panel" id="p-src" hidden role="dialog" aria-modal="true" aria-labelledby="src-t">
+  <div class="inner">
+    <div><button class="btn ghost" type="button" data-close>Volver</button></div>
+    <h2 id="src-t">Fuentes</h2>
+    <ol id="fuentes-list"></ol>
+    <p>Pieza elaborada para un reportaje universitario sobre el terremoto del 10 de agosto de 2026 y Roldanillo (Valle del Cauca). Fuentes consultadas hasta el 22 de octubre de 2026.</p>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
